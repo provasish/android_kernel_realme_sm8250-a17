@@ -367,6 +367,12 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
 	policy->driver_data = c;
 	policy->dvfs_possible_from_any_cpu = true;
 
+	/* Gaming optimization: aggressive boost behavior */
+	if (c->max_cores > 4) {
+		/* Enable multi-core boost for performance cores */
+		policy->boost_enabled = true;
+	}
+
 	em_register_perf_domain(policy->cpus, ret, &em_cb);
 
 	if (c->dcvsh_irq > 0 && !c->is_irq_requested) {

@@ -80,6 +80,8 @@ static int a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
 
 	/* Set and clear the OOB for DCVS to trigger the GMU */
 	a6xx_gmu_set_oob(gmu, GMU_OOB_DCVS_SET);
+	/* Gaming optimization: reduced delay for faster frequency scaling */
+	udelay(10);
 	a6xx_gmu_clear_oob(gmu, GMU_OOB_DCVS_SET);
 
 	return gmu_read(gmu, REG_A6XX_GMU_DCVS_RETURN);
