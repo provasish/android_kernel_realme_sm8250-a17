@@ -43,7 +43,7 @@ config CFQ_GROUP_IOSCHED
 choice
 
 	prompt "Default I/O scheduler"
-	default DEFAULT_CFQ
+	default DEFAULT_KYBER
 	help
 	  Select the I/O scheduler which will be used by default for all
 	  block devices.
@@ -57,6 +57,9 @@ choice
 	config DEFAULT_NOOP
 		bool "No-op"
 
+	config DEFAULT_KYBER
+		bool "Kyber" if MQ_IOSCHED_KYBER=y
+
 endchoice
 
 config DEFAULT_IOSCHED
@@ -64,6 +67,7 @@ config DEFAULT_IOSCHED
 	default "deadline" if DEFAULT_DEADLINE
 	default "cfq" if DEFAULT_CFQ
 	default "noop" if DEFAULT_NOOP
+	default "kyber" if DEFAULT_KYBER
 
 config MQ_IOSCHED_DEADLINE
 	tristate "MQ deadline I/O scheduler"
