@@ -1,0 +1,29 @@
+config SCHED_GAMEMODE
+	tristate "Game Mode Scheduler - SM8250 Gaming Optimization"
+	default y
+	help
+	  Enables game mode scheduler for optimal gaming performance on SM8250.
+
+	  Features:
+	  - Automatic game process detection
+	  - Core affinity binding to performance cores
+	  - Dynamic priority boost for game threads
+	  - Advanced cgroup scheduling
+	  - Real-time thread support
+	  - Thermal profile management
+
+	  This module provides sysfs interface at /sys/kernel/gamemode for
+	  runtime configuration of gaming optimizations.
+
+	  Say Y to enable game mode scheduler.
+	  Say M to compile as module.
+	  Say N to disable.
+
+config SCHED_GAMEMODE_DEBUG
+	bool "Game Mode Scheduler Debug"
+	depends on SCHED_GAMEMODE
+	default n
+	help
+	  Enable debug logging for game mode scheduler.
+	  This will add extra kernel log messages for debugging.
+	  Recommended for development only, disable for production.
