@@ -708,7 +708,10 @@ static int sde_connector_update_hbm_enter(struct drm_connector *connector,
 						ret = wait_event_timeout(
 							*drm_crtc_vblank_waitqueue(
 								crtc),
-							target_vblank ==
+							/* <=, not ==: the count may
+							 * already be past target
+							 * when the waiter runs */
+							target_vblank <=
 								drm_crtc_vblank_count(
 									crtc),
 							msecs_to_jiffies(
@@ -1042,7 +1045,8 @@ static int sde_connector_update_hbm_exit(struct drm_connector *connector,
 			} else {
 				ret = wait_event_timeout(
 					*drm_crtc_vblank_waitqueue(crtc),
-					target_vblank ==
+					/* <=, not ==: see above */
+					target_vblank <=
 						drm_crtc_vblank_count(crtc),
 					msecs_to_jiffies((vblank + 1) * 17));
 			}
