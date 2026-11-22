@@ -14236,9 +14236,7 @@ int8_t csr_get_cfg_max_tx_power(struct mac_context *mac, uint32_t ch_freq)
 	uint32_t cfg_length = 0;
 	int8_t maxTxPwr = 0;
 	tSirMacChanInfo *pCountryInfo = NULL;
-	uint8_t count = 0;
-	uint8_t maxChannels;
-	int32_t rem_length = 0;
+	uint32_t count, num_entries;
 
 	if (WLAN_REG_IS_5GHZ_CH_FREQ(ch_freq)) {
 		cfg_length = mac->mlme_cfg->power.max_tx_power_5.len;
@@ -14251,6 +14249,14 @@ int8_t csr_get_cfg_max_tx_power(struct mac_context *mac, uint32_t ch_freq)
 	} else {
 		return maxTxPwr;
 	}
+
+	/*
+	 * No max tx power table configured for this band: nothing to look up.
+	 * Bail out before qdf_mem_malloc(0), which fails and logs
+	 * "Cannot malloc 0 bytes" on every call.
+	 */
+	if (!cfg_length)
+		return maxTxPwr;
 
 	pCountryInfo = qdf_mem_malloc(cfg_length);
 	if (!pCountryInfo)
@@ -14270,18 +14276,20 @@ int8_t csr_get_cfg_max_tx_power(struct mac_context *mac, uint32_t ch_freq)
 			     cfg_length);
 	}
 
-	/* Identify the channel and maxtxpower */
-	rem_length = cfg_length;
-	while (rem_length >= (sizeof(tSirMacChanInfo))) {
-		maxChannels = pCountryInfo[count].numChannels;
+	/*
+	 * Identify the channel and maxtxpower. Check each entry's own range;
+	 * the old loop incremented count before the range check, so it
+	 * compared against the next entry and read one entry past the end of
+	 * the buffer on the last iteration. As before, fall back to the last
+	 * entry's power if no range matches.
+	 */
+	num_entries = cfg_length / sizeof(tSirMacChanInfo);
+	for (count = 0; count < num_entries; count++) {
 		maxTxPwr = pCountryInfo[count].maxTxPower;
-		count++;
-		rem_length -= (sizeof(tSirMacChanInfo));
-
 		if (ch_freq >= pCountryInfo[count].first_freq &&
-		    ch_freq < (pCountryInfo[count].first_freq + maxChannels)) {
+		    ch_freq < (pCountryInfo[count].first_freq +
+			       pCountryInfo[count].numChannels))
 			break;
-		}
 	}
 
 error:
