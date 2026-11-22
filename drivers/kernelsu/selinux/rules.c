@@ -151,7 +151,7 @@ static int apply_kernelsu_rules_fn(void *ptr)
 
 void apply_kernelsu_rules(void)
 {
-    struct selinux_policy *pol, *old_pol;
+    struct selinux_policy __maybe_unused *pol, *old_pol;
     struct policydb *db;
 
     if (!getenforce()) {
