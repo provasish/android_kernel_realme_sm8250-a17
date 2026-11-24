@@ -197,6 +197,18 @@ $(KERNEL_HEADERS_INSTALL): $(KERNEL_OUT)
 				cp -Rf  $(KERNEL_HEADERS_INSTALL)/include/bringup_headers/* $(KERNEL_HEADERS_INSTALL)/include/ ;\
 			fi ;\
 			fi
+	@# headers_install puts techpack uapi headers in usr/<name>/include/uapi, but the QTI HALs
+	@# (audio, display, ...) look in usr/techpack/<name>/include and usr/include/<name>.
+	$(hide) for tp in $(KERNEL_HEADERS_INSTALL)/*/include/uapi; do \
+			[ -d "$$tp" ] || continue; \
+			name=$$(basename $$(dirname $$(dirname $$tp))); \
+			mkdir -p $(KERNEL_HEADERS_INSTALL)/techpack/$$name/include; \
+			cp -a $$tp/. $(KERNEL_HEADERS_INSTALL)/techpack/$$name/include/; \
+			if [ ! -e $(KERNEL_HEADERS_INSTALL)/include/$$name ]; then \
+				mkdir -p $(KERNEL_HEADERS_INSTALL)/include/$$name; \
+				cp -a $$tp/. $(KERNEL_HEADERS_INSTALL)/include/$$name/; \
+			fi; \
+		done
 	$(hide) if [ "$(KERNEL_HEADER_DEFCONFIG)" != "$(KERNEL_DEFCONFIG)" ]; then \
 			echo "Used a different defconfig for header generation"; \
 			rm -f $(BUILD_ROOT_LOC)$(KERNEL_CONFIG); \
