@@ -1360,6 +1360,7 @@ headers_install: __headers
 	$(Q)$(MAKE) $(hdr-inst)=include/uapi dst=include
 	$(Q)$(MAKE) $(hdr-inst)=arch/$(SRCARCH)/include/uapi $(hdr-dst)
 	$(Q)$(MAKE) $(hdr-inst)=techpack
+	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/techpack-headers-fixup.sh $(INSTALL_HDR_PATH)
 
 PHONY += headers_check_all
 headers_check_all: headers_install_all
