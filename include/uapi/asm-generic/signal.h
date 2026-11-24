@@ -100,7 +100,8 @@ typedef unsigned long old_sigset_t;
 #define __ARCH_HAS_SA_RESTORER
 #endif
 
-#ifndef __KERNEL__
+/* bionic provides its own struct sigaction */
+#if !defined(__KERNEL__) && !defined(__ANDROID__)
 struct sigaction {
 	__sighandler_t sa_handler;
 	unsigned long sa_flags;

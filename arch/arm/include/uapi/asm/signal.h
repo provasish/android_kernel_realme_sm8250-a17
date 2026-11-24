@@ -93,7 +93,8 @@ typedef unsigned long sigset_t;
 
 #include <asm-generic/signal-defs.h>
 
-#ifndef __KERNEL__
+/* bionic provides its own struct sigaction */
+#if !defined(__KERNEL__) && !defined(__ANDROID__)
 /* Here we must cater to libcs that poke about in kernel headers.  */
 
 struct sigaction {
