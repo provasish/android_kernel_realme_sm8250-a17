@@ -1,6 +1,8 @@
 cc_binary_host {
     name: "unifdef",
     srcs: ["scripts/unifdef.c"],
+    // scripts/unifdef.c uses "constexpr" as a variable name, a keyword in C23.
+    c_std: "gnu11",
     sanitize: {
         never: true,
     },
