@@ -1609,3 +1609,16 @@ board_temp-usr {
 	qcom,min-dropout-voltage = <10000>;
 	qcom,hpm-min-load = <10000>;
 };
+
+/* pstore: keep the last kernel log across a panic or a watchdog reset */
+&reserved_memory {
+	ramoops: ramoops@0xB0000000 {
+		compatible = "ramoops";
+		reg = <0 0xB0000000 0 0x00400000>;
+		record-size = <0x40000>;
+		console-size = <0x40000>;
+		ftrace-size = <0x40000>;
+		pmsg-size = <0x200000>;
+		ecc-size = <0x0>;
+	};
+};
